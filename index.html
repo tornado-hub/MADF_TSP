@@ -1,12 +1,45 @@
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>Choosing Cities</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("form").submit(function(e) {
+                e.preventDefault(); // Prevent form submission
+                var form_data = $(this).serialize(); // Serialize form data
+
+                $.ajax({
+                    type: "POST",
+                    url: "process.php",
+                    data: form_data,
+                    success: function(response) {
+                        $("#output").html(response); // Update output div with PHP response
+                    }
+                });
+            });
+        });
+    </script>
 </head>
 <body>
-    <h2> CHOOSE CITIES TO TRAVEL </h2>
-    
-    <form action = "process.php" method = "POST">
+    <h2>CHOOSE CITIES TO TRAVEL</h2>
+
+    <form>
+            <label for="starting_city">Select Starting City:</label>
+            <select name="starting_city">
+                <option value="panaji">Panaji</option>
+                <option value="margao">Margao</option>
+                <option value="chennai">Chennai</option>
+                <option value="vellore">Vellore</option>
+                <option value="trivandrum">Trivandrum</option>
+                <option value="kochi">Kochi</option>
+                <option value="bangalore">Bangalore</option>
+                <option value="mysore">Mysore</option>
+                <option value="hyderabad">Hyderabad</option>
+                <option value="vishakhapatnam">Vishakhapatnam</option>
+            </select>
+            <br>
         <label for = "panaji"> Panaji : </label>
         <input type = "checkbox" name = "cities[]" value = "panaji"> <br>
         
@@ -38,7 +71,9 @@
         <input type = "checkbox" name = "cities[]" value = "vishakhapatnam"> <br>
 
         <br>
-        <input type = "submit" value = "Submit">
+        <input type="submit" value="Submit">
     </form>
+
+    <div id="output"></div>
 </body>
 </html>

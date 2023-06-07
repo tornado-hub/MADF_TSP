@@ -7,124 +7,90 @@ $password = "";
 $dbname = "cities";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
-// Check if cities are selected
-
 if (isset($_POST['cities'])) {
-    die("Cities not selected.");
-}
+    $selectedCities = $_POST['cities'];
+    $startingCity = $_POST['starting_city'];
+    $numCities = count($selectedCities);
+    $sql = "SELECT city, " . implode(', ', $selectedCities) . " FROM citydist WHERE city IN ($placeholders)";
+    $stmt = $conn->prepare($sql);
 
-// Check if starting city is selected
-if (!isset($_POST['starting_city'])) {
-    die("Starting city not selected.");
-}
+    if ($stmt === false) {
+        die("Error preparing statement: " . $conn->error);
+    }
+    $stmt->bind_param(str_repeat('s', $numCities), ...$selectedCities);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $distanceMatrix = [];
+    while ($row = $result->fetch_assoc()) {
+        $city = $row['city'];
+        unset($row['city']);
+        $distanceMatrix[$city] = $row;
+    }
+    $stmt->close();
+    $shortestPath = null;
+    $shortestDistance = PHP_INT_MAX;
+    function permute($cities, $start, $end, $currentPath = [], $currentDistance = 0)
+    {
+        global $distanceMatrix, $shortestPath, $shortestDistance;
 
-// Check if at least 2 cities are selected
-if (count($_POST['cities']) < 2) {
-    die("Select at least 2 cities.");
-}
-
-$selectedCities = $_POST['cities'];
-$startingCity = $_POST['starting_city'];
-$numCities = count($selectedCities);
-
-// Generate the SQL query to fetch distances for selected cities
-$placeholders = implode(',', array_fill(0, $numCities, '?'));
-$sql = "SELECT city, " . implode(', ', $selectedCities) . " FROM citydist WHERE city IN ($placeholders)";
-$stmt = $conn->prepare($sql);
-
-if ($stmt === false) {
-    die("Error preparing statement: " . $conn->error);
-}
-
-// Bind parameters for the placeholders
-$stmt->bind_param(str_repeat('s', $numCities), ...$selectedCities);
-
-// Execute the query
-$stmt->execute();
-
-// Fetch the result
-$result = $stmt->get_result();
-
-// Build the distance matrix
-$distanceMatrix = [];
-while ($row = $result->fetch_assoc()) {
-    $city = $row['city'];
-    unset($row['city']);
-    $distanceMatrix[$city] = $row;
-}
-
-
-
-// Close the statement
-$stmt->close();
-
-// Solve the TSP using a brute-force approach
-$shortestPath = null;
-$shortestDistance = PHP_INT_MAX;
-function permute($cities, $start, $end, $currentPath = [], $currentDistance = 0)
-{
-    global $distanceMatrix, $shortestPath, $shortestDistance;
-
-    if ($start == $end) {
-        $currentPath[] = $cities[$start];
-        $currentDistance += calculatePathDistance($currentPath);
-        // Add the distance from the last city back to the start city
-        $currentDistance += $distanceMatrix[end($currentPath)][reset($currentPath)];
-        if ($currentDistance < $shortestDistance) {
-            $shortestDistance = $currentDistance;
-            $shortestPath = $currentPath;
-        }
-    } else {
-        for ($i = $start; $i <= $end; $i++) {
-            $cities = swap($cities, $start, $i);
+        if ($start == $end) {
             $currentPath[] = $cities[$start];
-            permute($cities, $start + 1, $end, $currentPath, $currentDistance);
-            $cities = swap($cities, $start, $i);
-            array_pop($currentPath);
+            $currentDistance += calculatePathDistance($currentPath);
+            // Add the distance from the last city back to the start city
+            $currentDistance += $distanceMatrix[end($currentPath)][reset($currentPath)];
+            if ($currentDistance < $shortestDistance) {
+                $shortestDistance = $currentDistance;
+                $shortestPath = $currentPath;
+            }
+        } else {
+            for ($i = $start; $i <= $end; $i++) {
+                $cities = swap($cities, $start, $i);
+                $currentPath[] = $cities[$start];
+                permute($cities, $start + 1, $end, $currentPath, $currentDistance);
+                $cities = swap($cities, $start, $i);
+                array_pop($currentPath);
+            }
         }
     }
-}
 
-function calculatePathDistance($path)
-{
-    global $distanceMatrix;
-    $distance = 0;
-    $numCities = count($path);
-    for ($i = 0; $i < $numCities - 1; $i++) {
-        $currentCity = $path[$i];
-        $nextCity = $path[$i + 1];
-        $distance += $distanceMatrix[$currentCity][$nextCity];
+    function calculatePathDistance($path)
+    {
+        global $distanceMatrix;
+        $distance = 0;
+        $numCities = count($path);
+        for ($i = 0; $i < $numCities - 1; $i++) {
+            $currentCity = $path[$i];
+            $nextCity = $path[$i + 1];
+            $distance += $distanceMatrix[$currentCity][$nextCity];
+        }
+        return $distance;
     }
-    return $distance;
+    function swap($cities, $i, $j)
+    {
+        $temp = $cities[$i];
+        $cities[$i] = $cities[$j];
+        $cities[$j] = $temp;
+        return $cities;
+    }
+
+    permute($selectedCities, 0, $numCities - 1);
+
+    $startIndex = array_search($startingCity, $shortestPath);
+    $shortestPath = array_merge(
+        array_slice($shortestPath, $startIndex),
+        array_slice($shortestPath, 0, $startIndex + 1)
+    );
+
+    // Display the shortest path and distance
+    echo "<h2>TSP Output</h2>";
+    echo "<p>Starting City: " . $startingCity . "</p>";
+    echo "<p>Shortest Path: " . implode(' -> ', $shortestPath) . "</p>";
+    echo "<p>Shortest Distance: " . $shortestDistance . "</p>";
+} else {
+    echo "No cities selected.";
 }
-
-function swap($cities, $i, $j)
-{
-    $temp = $cities[$i];
-    $cities[$i] = $cities[$j];
-    $cities[$j] = $temp;
-    return $cities;
-}
-
-permute($selectedCities, 0, $numCities - 1);
-
-$startIndex = array_search($startingCity, $shortestPath);
-$shortestPath = array_merge(
-    array_slice($shortestPath, $startIndex),
-    array_slice($shortestPath, 0, $startIndex + 1)
-);
-
-// Display the shortest path and distance
-echo "<h2>TSP Output</h2>";
-echo "<p>Shortest Path: " . implode(' -> ', $shortestPath) . "</p>";
-echo "<p>Travelling Distance: " . $shortestDistance . "</p>";
-
-
-
-// Close the database connection
 $conn->close();
+?>

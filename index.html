@@ -8,24 +8,22 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $("form").submit(function(e) {
+        $(document).ready(function () {
+            $("form").submit(function (e) {
                 e.preventDefault(); // Prevent form submission
                 var form_data = $(this).serialize(); // Serialize form data
                 var algorithm = $("#algorithm").val(); // Get the selected algorithm
-
                 var url = "";
                 if (algorithm === "tsp") {
                     url = "process.php"; // URL for TSP algorithm file
                 } else if (algorithm === "dijkstra") {
                     url = "dijkstas.php"; // URL for Dijkstra's algorithm file
                 }
-
                 $.ajax({
                     type: "POST",
                     url: url,
                     data: form_data,
-                    success: function(response) {
+                    success: function (response) {
                         $("#output").html(response); // Update output div with PHP response
                     }
                 });
@@ -33,110 +31,111 @@
         });
     </script>
 </head>
+
 <body style="background-color: #add8e6;">
     <header>
         <h1>Travelling Guide</h1>
     </header>
     <div class=" container">
-    <h2 id = "name">Choose Algorithm</h2>
-    <select name="algorithm" id="algorithm">
-        <option value="tsp">Traveling Salesman Problem</option>
-        <option value="dijkstra">Dijkstra's Algorithm</option>
-    </select>
-    <h2>CHOOSE CITIES TO TRAVEL</h2>
-    <form>
-        <label for="starting_city">Select Starting City:</label>
-        <select name="starting_city">
-            <option value="panaji">Panaji</option>
-            <option value="margao">Margao</option>
-            <option value="chennai">Chennai</option>
-            <option value="vellore">Vellore</option>
-            <option value="trivandrum">Trivandrum</option>
-            <option value="kochi">Kochi</option>
-            <option value="bangalore">Bangalore</option>
-            <option value="mysore">Mysore</option>
-            <option value="hyderabad">Hyderabad</option>
-            <option value="vishakhapatnam">Vishakhapatnam</option>
+        <h2 id="name">Choose Algorithm</h2>
+        <select name="algorithm" id="algorithm">
+            <option value="tsp">Traveling Salesman Problem</option>
+            <option value="dijkstra">Dijkstra's Algorithm</option>
         </select>
-        <br>
-        <label for="panaji">Panaji:</label>
-        <input type="checkbox" name="cities[]" value="panaji"><br>
-        <label for="margao">Margao:</label>
-        <input type="checkbox" name="cities[]" value="margao"><br>
-        <label for="chennai">Chennai:</label>
-        <input type="checkbox" name="cities[]" value="chennai"><br>
-        <label for="vellore">Vellore:</label>
-        <input type="checkbox" name="cities[]" value="vellore"><br>
-        <label for="trivandrum">Trivandrum:</label>
-        <input type="checkbox" name="cities[]" value="trivandrum"><br>
-        <label for="kochi">Kochi:</label>
-        <input type="checkbox" name="cities[]" value="kochi"><br>
-        <label for="bangalore">Bangalore:</label>
-        <input type="checkbox" name="cities[]" value="bangalore"><br>
-        <label for="mysore">Mysore:</label>
-        <input type="checkbox" name="cities[]" value="mysore"><br>
-        <label for="hyderabad">Hyderabad:</label>
-        <input type="checkbox" name="cities[]" value="hyderabad"><br>
-        <label for="vishakhapatnam">Vishakhapatnam:</label>
-        <input type="checkbox" name="cities[]" value="vishakhapatnam"><br>
-        <br>
-        <input type="submit" value="Submit">
-    </form>
-    <div id="output"></div>
-    <h2>Choose Source and Destination Cities</h2>
-    <form>
-        <label for="source">Source City:</label>
-        <select name="source" id="source">
-            <option value="mapusa">Mapusa</option>
-            <option value="panjim">Panaji</option>
-            <option value="margao">Margao</option>
-            <option value="ponda">Ponda</option>
-            <option value="vasco">Vasco</option>
-            <option value="bicholim">Bicholim</option>
-            <option value="usgao">Usgao</option>
-            <option value="valpoi">Valpoi</option>
-            <option value="benaulim">Benaulim</option>
-            <option value="sanvordem">Sanvordem</option>
-            <option value="sanguem">Sanguem</option>
-            <option value="chinchinim">Chincinim</option>
-            <option value="cancona">Cancona</option>
-        </select>
-        <br>
-        <br>
-        <label for="destination">Destination City:</label>
-        <select name="destination" id="destination">
-            <option value="mapusa">Mapusa</option>
-            <option value="panjim">Panaji</option>
-            <option value="margao">Margao</option>
-            <option value="ponda">Ponda</option>
-            <option value="vasco">Vasco</option>
-            <option value="bicholim">Bicholim</option>
-            <option value="usgao">Usgao</option>
-            <option value="valpoi">Valpoi</option>
-            <option value="benaulim">Benaulim</option>
-            <option value="sanvordem">Sanvordem</option>
-            <option value="sanguem">Sanguem</option>
-            <option value="chinchinim">Chincinim</option>
-            <option value="cancona">Cancona</option>
-        </select>
-        <br>
-        <input type="submit" value="Find Shortest Path">
-    </form>
-    
+        <h2>CHOOSE CITIES TO TRAVEL</h2>
+        <form>
+            <label for="starting_city">Select Starting City:</label>
+            <select name="starting_city">
+                <option value="panaji">Panaji</option>
+                <option value="margao">Margao</option>
+                <option value="chennai">Chennai</option>
+                <option value="vellore">Vellore</option>
+                <option value="trivandrum">Trivandrum</option>
+                <option value="kochi">Kochi</option>
+                <option value="bangalore">Bangalore</option>
+                <option value="mysore">Mysore</option>
+                <option value="hyderabad">Hyderabad</option>
+                <option value="vishakhapatnam">Vishakhapatnam</option>
+            </select>
+            <br>
+            <label for="panaji">Panaji:</label>
+            <input type="checkbox" name="cities[]" value="panaji"><br>
+            <label for="margao">Margao:</label>
+            <input type="checkbox" name="cities[]" value="margao"><br>
+            <label for="chennai">Chennai:</label>
+            <input type="checkbox" name="cities[]" value="chennai"><br>
+            <label for="vellore">Vellore:</label>
+            <input type="checkbox" name="cities[]" value="vellore"><br>
+            <label for="trivandrum">Trivandrum:</label>
+            <input type="checkbox" name="cities[]" value="trivandrum"><br>
+            <label for="kochi">Kochi:</label>
+            <input type="checkbox" name="cities[]" value="kochi"><br>
+            <label for="bangalore">Bangalore:</label>
+            <input type="checkbox" name="cities[]" value="bangalore"><br>
+            <label for="mysore">Mysore:</label>
+            <input type="checkbox" name="cities[]" value="mysore"><br>
+            <label for="hyderabad">Hyderabad:</label>
+            <input type="checkbox" name="cities[]" value="hyderabad"><br>
+            <label for="vishakhapatnam">Vishakhapatnam:</label>
+            <input type="checkbox" name="cities[]" value="vishakhapatnam"><br>
+            <br>
+            <input type="submit" value="Submit">
+        </form>
+        <div id="output"></div>
+        <h2>Choose Source and Destination Cities</h2>
+        <form>
+            <label for="source">Source City:</label>
+            <select name="source" id="source">
+                <option value="mapusa">Mapusa</option>
+                <option value="panjim">Panaji</option>
+                <option value="margao">Margao</option>
+                <option value="ponda">Ponda</option>
+                <option value="vasco">Vasco</option>
+                <option value="bicholim">Bicholim</option>
+                <option value="usgao">Usgao</option>
+                <option value="valpoi">Valpoi</option>
+                <option value="benaulim">Benaulim</option>
+                <option value="sanvordem">Sanvordem</option>
+                <option value="sanguem">Sanguem</option>
+                <option value="chinchinim">Chincinim</option>
+                <option value="cancona">Cancona</option>
+            </select>
+            <br>
+            <br>
+            <label for="destination">Destination City:</label>
+            <select name="destination" id="destination">
+                <option value="mapusa">Mapusa</option>
+                <option value="panjim">Panaji</option>
+                <option value="margao">Margao</option>
+                <option value="ponda">Ponda</option>
+                <option value="vasco">Vasco</option>
+                <option value="bicholim">Bicholim</option>
+                <option value="usgao">Usgao</option>
+                <option value="valpoi">Valpoi</option>
+                <option value="benaulim">Benaulim</option>
+                <option value="sanvordem">Sanvordem</option>
+                <option value="sanguem">Sanguem</option>
+                <option value="chinchinim">Chincinim</option>
+                <option value="cancona">Cancona</option>
+            </select>
+            <br>
+            <input type="submit" value="Find Shortest Path">
+        </form>
+
     </div>
-   <footer>
-    <font color="white">
-        <center>
-            <p>Team</p>
-        </center>
-        <br>
-        <div id="base">
-            <a href="https://example.com">Dhruv Jadav</a>
-            <a href="https://example.com">Dhruv Naik</a>
-            <a href="https://example.com">Dickson Dias</a>
-            <a href="https://example.com">Eshan Dessai</a>
-        </div>
-    </font>
-</footer>
+    <footer>
+        <font color="white">
+            <center>
+                <p>Team</p>
+            </center>
+            <br>
+            <div id="base">
+                <a href="https://example.com">Dhruv Jadav</a>
+                <a href="https://example.com">Dhruv Naik</a>
+                <a href="https://example.com">Dickson Dias</a>
+                <a href="https://example.com">Eshan Dessai</a>
+            </div>
+        </font>
+    </footer>
 </body>
 </html>

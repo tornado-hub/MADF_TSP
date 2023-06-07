@@ -4,25 +4,38 @@
 <head>
     <title>Choosing Cities</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $("form").submit(function(e) {
-                e.preventDefault(); // Prevent form submission
-                var form_data = $(this).serialize(); // Serialize form data
+<script>
+    $(document).ready(function() {
+        $("form").submit(function(e) {
+            e.preventDefault(); // Prevent form submission
+            var form_data = $(this).serialize(); // Serialize form data
+            var algorithm = $("#algorithm").val(); // Get the selected algorithm
 
-                $.ajax({
-                    type: "POST",
-                    url: "process.php",
-                    data: form_data,
-                    success: function(response) {
-                        $("#output").html(response); // Update output div with PHP response
-                    }
-                });
+            var url = "";
+            if (algorithm === "tsp") {
+                url = "process.php"; // URL for TSP algorithm file
+            } else if (algorithm === "dijkstra") {
+                url = "dijkstas.php"; // URL for Dijkstra's algorithm file
+            }
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form_data,
+                success: function(response) {
+                    $("#output").html(response); // Update output div with PHP response
+                }
             });
         });
-    </script>
+    });
+</script>
 </head>
 <body>
+    <h2>Choose Algorithm</h2>
+<select name="algorithm" id="algorithm">
+    <option value="tsp">Traveling Salesman Problem</option>
+    <option value="dijkstra">Dijkstra's Algorithm</option>
+</select>
     <h2>CHOOSE CITIES TO TRAVEL</h2>
 
     <form>
@@ -74,6 +87,52 @@
         <input type="submit" value="Submit">
     </form>
 
+    
+    <h2>Choose Source and Destination Cities</h2>
+
+    <form>
+        <label for="source">Source City:</label>
+        <select name="source" id="source">
+            <option value="mapusa">Mapusa</option>
+            <option value="panjim">Panaji</option>
+            <option value="margao">Margao</option>
+            <option value="ponda">Ponda</option>
+            <option value="vasco">Vasco</option>
+            <option value="bicholim">Bicholim</option>
+            <option value="usgao">Usgao</option>
+            <option value="valpoi">Valpoi</option>
+            <option value="benaulim">Benaulim</option>
+            <option value="sanvordem">Sanvordem</option>
+            <option value="sanguem">Sanguem</option>
+            <option value="chinchinim">Chincinim</option>
+            <option value="cancona">Cancona</option>
+
+        </select>
+
+        <br>
+        <br>
+        <label for="destination">Destination City:</label>
+        <select name="destination" id="destination">
+            <option value="mapusa">Mapusa</option>
+            <option value="panjim">Panaji</option>
+            <option value="margao">Margao</option>
+            <option value="ponda">Ponda</option>
+            <option value="vasco">Vasco</option>
+            <option value="bicholim">Bicholim</option>
+            <option value="usgao">Usgao</option>
+            <option value="valpoi">Valpoi</option>
+            <option value="benaulim">Benaulim</option>
+            <option value="sanvordem">Sanvordem</option>
+            <option value="sanguem">Sanguem</option>
+            <option value="chinchinim">Chincinim</option>
+            <option value="cancona">Cancona</option>
+
+        </select>
+
+        <br>
+
+        <input type="submit" value="Find Shortest Path">
+    </form>
     <div id="output"></div>
 </body>
 </html>
